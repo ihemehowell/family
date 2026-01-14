@@ -6,8 +6,8 @@ import Link from 'next/link'
 import { Edit, LogOut } from 'lucide-react'
 
 export default async function DashboardPage() {
-  const cookieStore = await cookies()
-  const supabase = createClient(cookieStore)
+  const supabase = createClient()
+
 
   const {
     data: { user },
