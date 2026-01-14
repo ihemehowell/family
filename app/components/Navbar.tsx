@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
-import { LogOut, Users, Home, Settings, Menu, X } from 'lucide-react'
+import { LogOut, Users, Home, Settings, Menu, X, LayoutDashboard } from 'lucide-react'
 
 export default function Navbar() {
   const router = useRouter()
@@ -20,17 +20,19 @@ export default function Navbar() {
     <nav className="bg-white shadow-md px-6 py-3 flex justify-between items-center sticky top-0 z-50">
       {/* Left: Logo / Links */}
       <div className="flex items-center gap-6">
+      {/* <Link href="/" className="hidden md:flex items-center justify-center gap-2 text-gray-800 font-semibold hover:text-blue-600 transition">
+          <Home size={20} /> Home
+        </Link> */}
+
         <Link href="/dashboard" className="hidden md:flex items-center gap-2 text-gray-800 font-semibold hover:text-blue-600 transition">
-          <Home size={20} /> Dashboard
+          <LayoutDashboard size={20} /> Profile
         </Link>
 
         <Link href="/admin" className="hidden md:flex items-center gap-2 text-gray-800 hover:text-blue-600 transition">
           <Users size={20} /> Family Members
         </Link>
 
-        <Link href="/settings" className="hidden md:flex items-center gap-2 text-gray-800 hover:text-blue-600 transition">
-          <Settings size={20} /> Settings
-        </Link>
+        
       </div>
 
       {/* Right: Profile & Hamburger */}
@@ -48,13 +50,14 @@ export default function Navbar() {
           {/* Profile dropdown */}
           {profileMenuOpen && (
             <div className="absolute right-0 mt-2 w-44 bg-white shadow-lg rounded-lg border border-gray-200 py-2 flex flex-col">
-              <Link
+              {/* <Link
                 href="/settings"
                 className="px-4 py-2 text-gray-700 hover:bg-gray-100 flex items-center gap-2"
                 onClick={() => setProfileMenuOpen(false)}
+                aria-disabled
               >
                 <Settings size={16} /> Settings
-              </Link>
+              </Link> */}
               <button
                 onClick={logout}
                 className="px-4 py-2 text-red-600 hover:bg-gray-100 flex items-center gap-2"
@@ -82,9 +85,6 @@ export default function Navbar() {
           </Link>
           <Link href="/admin" className="px-6 py-3 border-b border-gray-100 flex items-center gap-2 hover:bg-gray-50">
             <Users size={18} /> Family Members
-          </Link>
-          <Link href="/settings" className="px-6 py-3 border-b border-gray-100 flex items-center gap-2 hover:bg-gray-50">
-            <Settings size={18} /> Settings
           </Link>
           <button
             onClick={logout}

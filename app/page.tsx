@@ -2,54 +2,83 @@ import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 
 export default async function Page() {
-const supabase = createClient()
-
-
-  // Fetch some sample data (optional)
-  const { data: todos } = await supabase.from('todos').select()
+  const supabase = createClient()
+  const { data: todos } = await supabase.from('todos').select().limit(5)
 
   return (
-    <div className="min-h-screen bg-gradient-to-tr from-blue-300 to-gray-900 flex flex-col">
-      {/* Welcome Section */}
-      <div className="flex-1 flex flex-col justify-center items-center text-center px-4 md:px-0">
-        <h1 className="text-6xl md:text-6xl font-bold text-gray-900 mb-4 animate-fadeIn">
-          Welcome to Okorocha Family Dashboard
-        </h1>
-        <p className="text-gray-900 text-lg md:text-xl mb-8 animate-fadeIn delay-100">
-          Keep track of all family members, tasks, and updates in one place.
-        </p>
-        <div className="flex gap-4 justify-center">
-        <Link
-          href="/login"
-          className="bg-blue-400 text-white px-6 py-3 rounded-xl hover:bg-blue-500 transition font-semibold animate-fadeIn delay-200"
-        >
-           Login
-        </Link>
-        <p className="text-gray-900 text-lg md:text-xl mb-8 animate-fadeIn delay-100">or</p>
-        <Link
-          href="/register"
-          className="bg-blue-400 text-white px-6 py-3 rounded-xl hover:bg-blue-500 transition font-semibold animate-fadeIn delay-200"
-        >
-          Register
-        </Link>
+    <div className="min-h-screen bg-gradient-to-br from-indigo-500 via-blue-500 to-slate-900 flex flex-col">
+
+      {/* HERO */}
+      <div className="flex-1 flex items-center justify-center px-6">
+        <div className="max-w-3xl w-full bg-white/10 backdrop-blur-xl rounded-3xl shadow-xl p-10 text-center border border-white/20">
+
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 tracking-tight">
+            Okorocha Family Dashboard
+          </h1>
+
+          <p className="text-white/80 text-lg md:text-xl mb-8">
+            A private space to manage family members, tasks, and important updates — all in one secure place.
+          </p>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link
+              href="/login"
+              className="w-full sm:w-auto px-8 py-3 rounded-xl bg-white text-slate-900 font-semibold hover:bg-white/90 transition shadow"
+            >
+              Login
+            </Link>
+
+            <span className="text-white/60 hidden sm:block">or</span>
+
+            <Link
+              href="/register"
+              className="w-full sm:w-auto px-8 py-3 rounded-xl border border-white/40 text-white font-semibold hover:bg-white/10 transition"
+            >
+              Create an Account
+            </Link>
+          </div>
         </div>
       </div>
 
-      {/* Optional Section: Quick Todos / Highlights */}
+      {/* PREVIEW SECTION */}
       {todos && todos.length > 0 && (
-        <div className="bg-white rounded-2xl shadow-md max-w-4xl mx-auto mt-12 p-6 w-full">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-4">Your Tasks Overview</h2>
-          <ul className="space-y-2">
-            {todos.map((todo: any) => (
-              <li
-                key={todo.id}
-                className="p-3 border rounded-lg flex justify-between items-center hover:bg-gray-50 transition"
-              >
-                <span className="text-gray-700">{todo.title || todo.task || 'Untitled Task'}</span>
-                <span className="text-sm text-gray-400">{todo.status || 'Pending'}</span>
-              </li>
-            ))}
-          </ul>
+        <div className="px-6 pb-12">
+          <div className="max-w-4xl mx-auto bg-white rounded-3xl shadow-lg p-8">
+
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-semibold text-gray-900">
+                Recent Tasks
+              </h2>
+              <Link href="/login" className="text-sm text-indigo-600 hover:underline">
+                View all →
+              </Link>
+            </div>
+
+            <ul className="space-y-3">
+              {todos.map((todo: any) => (
+                <li
+                  key={todo.id}
+                  className="flex items-center justify-between p-4 rounded-xl border border-gray-200 hover:bg-gray-50 transition"
+                >
+                  <div>
+                    <p className="font-medium text-gray-800">
+                      {todo.title || todo.task || 'Untitled Task'}
+                    </p>
+                    <p className="text-sm text-gray-400">
+                      {todo.description || 'No description'}
+                    </p>
+                  </div>
+
+                  <span className={`text-xs font-semibold px-3 py-1 rounded-full
+                    ${todo.status === 'completed' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}
+                  `}>
+                    {todo.status || 'Pending'}
+                  </span>
+                </li>
+              ))}
+            </ul>
+
+          </div>
         </div>
       )}
     </div>

@@ -51,14 +51,6 @@ export default async function DashboardPage() {
               >
                 <Edit className="w-5 h-5 mr-2" />
               </Link>
-              <form action="/auth/logout" method="post">
-                <button
-                  type="submit"
-                  className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-medium"
-                >
-                  <LogOut className="w-5 h-5 mr-2" />
-                </button>
-              </form>
             </div>
           </div>
         </div>
