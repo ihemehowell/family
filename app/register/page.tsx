@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
+import Link from 'next/link';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -74,17 +75,6 @@ export default function RegisterPage() {
 
     setLoading(true);
     try {
-      let photo_url = '';
-
-      // 1️⃣ Upload profile photo first (if possible), or handle later
-      // NOTE: Without a session, RLS might block upload if policy requires auth.
-      // Ideally, upload AFTER login or allow public uploads for a temp folder.
-      // For now, we'll try to include the URL if the user manages to upload, 
-      // otherwise this might fail if policies are strict. 
-      // SKIPPING photo upload for initial registration to avoid RLS issues if email confirm is on.
-      // You can implement "upload after login" logic later.
-
-      // 2️⃣ Sign up with metadata
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: form.email,
         password: form.password,
@@ -99,26 +89,19 @@ export default function RegisterPage() {
             location: form.location,
             address: form.address,
             phone_number: form.phone_number,
-            photo_url: photo_url, // empty for now
-          }
-        }
+            photo_url: '', // handle upload later
+          },
+        },
       });
 
       if (authError) throw authError;
 
-      // 2.5 Manually insert into family_members to ensure data persistence
-      // (in case the trigger fails or is missing)
-      
-
-      // 3️⃣ Redirect to dashboard (or email confirmation page)
-      // Check if session exists (meaning auto-login worked)
       if (authData.session) {
         router.push('/dashboard');
       } else {
         alert('Registration successful! Please check your email to verify your account.');
         router.push('/login');
       }
-
     } catch (err: any) {
       alert(`Registration failed: ${err.message}`);
     } finally {
@@ -126,156 +109,166 @@ export default function RegisterPage() {
     }
   };
 
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-8 rounded shadow-md w-full max-w-lg space-y-4"
-      >
-        <h1 className="text-2xl font-bold mb-4 text-center">Register</h1>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-tr from-blue-50 to-gray-50 p-4">
+      <div className="bg-white w-full max-w-lg rounded-3xl shadow-2xl p-8 md:p-12 space-y-6">
+        <h1 className="text-3xl font-bold text-center text-gray-900">Create an Account</h1>
+        <p className="text-gray-500 text-center">Join and manage your family dashboard</p>
 
+        {/* Error messages */}
         {Object.values(errors).map(
           (err, i) =>
             err && (
-              <p key={i} className="text-red-500 text-sm">
+              <p key={i} className="text-red-500 text-sm text-center">
                 {err}
               </p>
             )
         )}
 
-        {/* Input fields */}
-        <input
-          type="text"
-          name="full_name"
-          placeholder="Full Name"
-          value={form.full_name}
-          onChange={handleChange}
-          className="w-full p-3 border rounded"
-        />
+        <form className="space-y-4" onSubmit={handleSubmit}>
+          <input
+            type="text"
+            name="full_name"
+            placeholder="Full Name"
+            value={form.full_name}
+            onChange={handleChange}
+            className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+          />
 
-        <input
-          type="number"
-          name="age"
-          placeholder="Age"
-          value={form.age}
-          onChange={handleChange}
-          className="w-full p-3 border rounded"
-        />
+          <input
+            type="number"
+            name="age"
+            placeholder="Age"
+            value={form.age}
+            onChange={handleChange}
+            className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 transition"
+          />
 
-        <input
-          type="text"
-          name="family_branch"
-          placeholder="Family Branch"
-          value={form.family_branch}
-          onChange={handleChange}
-          className="w-full p-3 border rounded"
-        />
+          <input
+            type="text"
+            name="family_branch"
+            placeholder="Family Branch"
+            value={form.family_branch}
+            onChange={handleChange}
+            className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 transition"
+          />
 
-        <select
-          name="employment_status"
-          value={form.employment_status}
-          onChange={handleChange}
-          className="w-full p-3 border rounded"
-        >
-          <option value="">Employment Status</option>
-          <option value="Employed">Employed</option>
-          <option value="Unemployed">Unemployed</option>
-          <option value="Self-employed">Self-employed</option>
-          <option value="Student">Student</option>
-          <option value="Retired">Retired</option>
-        </select>
+          <select
+            name="employment_status"
+            value={form.employment_status}
+            onChange={handleChange}
+            className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 transition"
+          >
+            <option value="">Employment Status</option>
+            <option value="Employed">Employed</option>
+            <option value="Unemployed">Unemployed</option>
+            <option value="Self-employed">Self-employed</option>
+            <option value="Student">Student</option>
+            <option value="Retired">Retired</option>
+          </select>
 
-        <select
-          name="marital_status"
-          value={form.marital_status}
-          onChange={handleChange}
-          className="w-full p-3 border rounded"
-        >
-          <option value="">Marital Status</option>
-          <option value="Single">Single</option>
-          <option value="Married">Married</option>
-          <option value="Divorced">Divorced</option>
-        </select>
+          <select
+            name="marital_status"
+            value={form.marital_status}
+            onChange={handleChange}
+            className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 transition"
+          >
+            <option value="">Marital Status</option>
+            <option value="Single">Single</option>
+            <option value="Married">Married</option>
+            <option value="Divorced">Divorced</option>
+          </select>
 
-        <select
-          name="graduate_status"
-          value={form.graduate_status}
-          onChange={handleChange}
-          className="w-full p-3 border rounded"
-        >
-          <option value="">Graduate Status</option>
-          <option value="Graduate">Graduate</option>
-          <option value="Non-Graduate">Non-Graduate</option>
-        </select>
+          <select
+            name="graduate_status"
+            value={form.graduate_status}
+            onChange={handleChange}
+            className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 transition"
+          >
+            <option value="">Graduate Status</option>
+            <option value="Graduate">Graduate</option>
+            <option value="Non-Graduate">Non-Graduate</option>
+          </select>
 
-        <input
-          type="text"
-          name="location"
-          placeholder="Location"
-          value={form.location}
-          onChange={handleChange}
-          className="w-full p-3 border rounded"
-        />
+          <input
+            type="text"
+            name="location"
+            placeholder="Location"
+            value={form.location}
+            onChange={handleChange}
+            className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 transition"
+          />
 
-        <input
-          type="text"
-          name="address"
-          placeholder="Address"
-          value={form.address}
-          onChange={handleChange}
-          className="w-full p-3 border rounded"
-        />
+          <input
+            type="text"
+            name="address"
+            placeholder="Address"
+            value={form.address}
+            onChange={handleChange}
+            className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 transition"
+          />
 
-        <input
-          type="tel"
-          name="phone_number"
-          placeholder="Phone Number"
-          value={form.phone_number}
-          onChange={handleChange}
-          className="w-full p-3 border rounded"
-        />
+          <input
+            type="tel"
+            name="phone_number"
+            placeholder="Phone Number"
+            value={form.phone_number}
+            onChange={handleChange}
+            className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 transition"
+          />
 
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={form.email}
-          onChange={handleChange}
-          className="w-full p-3 border rounded"
-        />
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            value={form.email}
+            onChange={handleChange}
+            className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 transition"
+          />
 
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={form.password}
-          onChange={handleChange}
-          className="w-full p-3 border rounded"
-        />
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            value={form.password}
+            onChange={handleChange}
+            className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 transition"
+          />
 
-        <input
-          type="password"
-          name="confirmPassword"
-          placeholder="Confirm Password"
-          value={form.confirmPassword}
-          onChange={handleChange}
-          className="w-full p-3 border rounded"
-        />
+          <input
+            type="password"
+            name="confirmPassword"
+            placeholder="Confirm Password"
+            value={form.confirmPassword}
+            onChange={handleChange}
+            className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 transition"
+          />
 
-        <input type="file" accept="image/*" onChange={handleFileChange}
-          className='border rounded-3xl font-black text-sm p-3 w-[250px] cursor-pointer hover:bg-gray-100 transition'
-        />
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            className="border rounded-full p-2 w-full text-sm cursor-pointer hover:bg-gray-100 transition"
+          />
 
-        <button
-          type="submit"
-          disabled={!isValid || loading}
-          className={`w-full p-3 rounded text-white ${isValid ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-400 cursor-not-allowed'
-            }`}
-        >
-          {loading ? 'Registering...' : 'Register'}
-        </button>
-      </form>
+          <button
+            type="submit"
+            disabled={!isValid || loading}
+            className={`w-full p-3 rounded-xl text-white font-semibold ${
+              isValid ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-400 cursor-not-allowed'
+            } transition`}
+          >
+            {loading ? 'Registering...' : 'Register'}
+          </button>
+        </form>
+
+        <p className="text-center text-gray-500 mt-4">
+          Already have an account?{' '}
+          <Link href="/login" className="text-blue-600 hover:underline font-medium">
+            Login
+          </Link>
+        </p>
+      </div>
     </div>
   );
 }

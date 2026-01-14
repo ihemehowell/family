@@ -59,6 +59,7 @@ export default function MemberTable() {
     a.click()
   }
 
+ 
   return (
     <div className="bg-white rounded-2xl shadow">
 
@@ -95,13 +96,13 @@ export default function MemberTable() {
             </tr>
           </thead>
           <tbody>
-            {visible.map(m => (
-              <tr
-                key={m.id}
-                onClick={() => router.push(`/dashboard/${m.id}`)}
-                className="border-b hover:bg-gray-100 cursor-pointer"
-              >
-                <Td>
+           {visible.map(m => (
+                <tr
+                  key={m.id}
+                  onClick={() => router.push(`/dashboard/${m.id}`)}
+                  className="border-b hover:bg-gray-100 cursor-pointer"
+                >
+               <Td>
                   <div className="flex items-center gap-3">
                     <img src={m.photo_url || '/placeholder.png'} className="w-9 h-9 rounded-full object-cover" />
                     <div>
