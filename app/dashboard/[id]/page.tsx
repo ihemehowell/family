@@ -15,7 +15,8 @@ export default async function MemberViewPage({ params }: { params: { id: string 
 
   if (!isUUID(id)) return notFound()
 
-  const supabase = createClient(await cookies())
+  
+  const supabase = createClient()
 
   const { data: member, error } = await supabase
     .from('family_members')
