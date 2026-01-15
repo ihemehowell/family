@@ -4,9 +4,24 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
+import router from 'next/router';
 
 export default function RegisterPage() {
   const router = useRouter();
+  const searchParams = useSearchParams(); //
+
+  const invite = searchParams.get('invite'); // 
+  const validInvite = invite === process.env.NEXT_PUBLIC_FAMILY_INVITE_TOKEN; // 
+
+  
+  useEffect(() => {
+    if (!validInvite) {
+      router.replace('/not-authorized'); // or /login
+    }
+  }, [validInvite, router]);
+
+  if (!validInvite) return null; // 
 
   const [form, setForm] = useState({
     full_name: '',
