@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 
@@ -6,7 +7,7 @@ export default async function Page() {
   const { data: todos } = await supabase.from('todos').select().limit(5)
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-500 via-blue-500 to-slate-900 flex flex-col">
+    <div className="min-h-screen bg-linear-to-br from-indigo-500 via-blue-500 to-slate-900 flex flex-col">
 
       {/* HERO */}
       <div className="flex-1 flex items-center justify-center px-6">
