@@ -74,14 +74,35 @@ export default function RegisterPage() {
     if (!isValid) return;
 
     setLoading(true);
+
     try {
+      let photo_url = '';
+      if (form.photo) {
+        const fileExt = form.photo.name.split('.').pop();
+        const fileName = `${Date.now()}.${fileExt}`;
+        const filePath = `avatars/${fileName}`;
+
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('profile-photos') // your bucket
+          .upload(filePath, form.photo);
+
+        if (uploadError) throw uploadError;
+
+        const { data } = supabase.storage
+          .from('profile-photos')
+          .getPublicUrl(filePath);
+
+        photo_url = data.publicUrl; // ✅ This must be set
+      }
+
+      // 2️⃣ Sign up user
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: form.email,
         password: form.password,
         options: {
           data: {
             full_name: form.full_name,
-            age: form.age,
+            age: Number(form.age),
             family_branch: form.family_branch,
             employment_status: form.employment_status,
             marital_status: form.marital_status,
@@ -89,17 +110,40 @@ export default function RegisterPage() {
             location: form.location,
             address: form.address,
             phone_number: form.phone_number,
-            photo_url: '', // handle upload later
+            photo_url, // ✅ Save here too
           },
         },
       });
 
       if (authError) throw authError;
 
+      // 3️⃣ Insert/Upsert into family_members table
+      if (authData.user) {
+        const { error: profileError } = await supabase
+          .from('family_members')
+          .upsert({
+            id: authData.user.id,
+            email: form.email,
+            full_name: form.full_name,
+            age: Number(form.age),
+            family_branch: form.family_branch,
+            employment_status: form.employment_status,
+            marital_status: form.marital_status,
+            graduate_status: form.graduate_status,
+            location: form.location,
+            address: form.address,
+            phone_number: form.phone_number,
+            photo_url, // ✅ Save the URL here
+          });
+
+        if (profileError) throw profileError; // check error
+      }
+
+      // 4️⃣ Redirect
       if (authData.session) {
         router.push('/dashboard');
       } else {
-        alert('Registration successful! Please check your email to verify your account.');
+        alert('Registration successful! Check your email to verify your account.');
         router.push('/login');
       }
     } catch (err: any) {
@@ -109,166 +153,164 @@ export default function RegisterPage() {
     }
   };
 
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-tr from-blue-50 to-gray-50 p-4">
-      <div className="bg-white w-full max-w-lg rounded-3xl shadow-2xl p-8 md:p-12 space-y-6">
-        <h1 className="text-3xl font-bold text-center text-gray-900">Create an Account</h1>
-        <p className="text-gray-500 text-center">Join and manage your family dashboard</p>
 
-        {/* Error messages */}
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white p-8 rounded shadow-md w-full max-w-lg space-y-4"
+      >
+        <h1 className="text-2xl font-bold mb-4 text-center">Register</h1>
+
         {Object.values(errors).map(
           (err, i) =>
             err && (
-              <p key={i} className="text-red-500 text-sm text-center">
+              <p key={i} className="text-red-500 text-sm">
                 {err}
               </p>
             )
         )}
 
-        <form className="space-y-4" onSubmit={handleSubmit}>
-          <input
-            type="text"
-            name="full_name"
-            placeholder="Full Name"
-            value={form.full_name}
-            onChange={handleChange}
-            className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-          />
+        {/* Input fields */}
+        <input
+          type="text"
+          name="full_name"
+          placeholder="Full Name"
+          value={form.full_name}
+          onChange={handleChange}
+          className="w-full p-3 border rounded"
+        />
 
-          <input
-            type="number"
-            name="age"
-            placeholder="Age"
-            value={form.age}
-            onChange={handleChange}
-            className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 transition"
-          />
+        <input
+          type="number"
+          name="age"
+          placeholder="Age"
+          value={form.age}
+          onChange={handleChange}
+          className="w-full p-3 border rounded"
+        />
 
-          <input
-            type="text"
-            name="family_branch"
-            placeholder="Family Branch"
-            value={form.family_branch}
-            onChange={handleChange}
-            className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 transition"
-          />
+        <input
+          type="text"
+          name="family_branch"
+          placeholder="Family Branch"
+          value={form.family_branch}
+          onChange={handleChange}
+          className="w-full p-3 border rounded"
+        />
 
-          <select
-            name="employment_status"
-            value={form.employment_status}
-            onChange={handleChange}
-            className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 transition"
+        <select
+          name="employment_status"
+          value={form.employment_status}
+          onChange={handleChange}
+          className="w-full p-3 border rounded"
+        >
+          <option value="">Employment Status</option>
+          <option value="Employed">Employed</option>
+          <option value="Unemployed">Unemployed</option>
+          <option value="Student">Student</option>
+        </select>
+
+        <select
+          name="marital_status"
+          value={form.marital_status}
+          onChange={handleChange}
+          className="w-full p-3 border rounded"
+        >
+          <option value="">Marital Status</option>
+          <option value="Single">Single</option>
+          <option value="Married">Married</option>
+          <option value="Divorced">Divorced</option>
+        </select>
+
+        <select
+          name="graduate_status"
+          value={form.graduate_status}
+          onChange={handleChange}
+          className="w-full p-3 border rounded"
+        >
+          <option value="">Graduate Status</option>
+          <option value="Graduate">Graduate</option>
+          <option value="Non-Graduate">Non-Graduate</option>
+        </select>
+
+        <input
+          type="text"
+          name="location"
+          placeholder="Location"
+          value={form.location}
+          onChange={handleChange}
+          className="w-full p-3 border rounded"
+        />
+
+        <input
+          type="text"
+          name="address"
+          placeholder="Address"
+          value={form.address}
+          onChange={handleChange}
+          className="w-full p-3 border rounded"
+        />
+
+        <input
+          type="tel"
+          name="phone_number"
+          placeholder="Phone Number"
+          value={form.phone_number}
+          onChange={handleChange}
+          className="w-full p-3 border rounded"
+        />
+
+        <input
+          type="email"
+          name="email"
+          placeholder="Email"
+          value={form.email}
+          onChange={handleChange}
+          className="w-full p-3 border rounded"
+        />
+
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          value={form.password}
+          onChange={handleChange}
+          className="w-full p-3 border rounded"
+        />
+
+        <input
+          type="password"
+          name="confirmPassword"
+          placeholder="Confirm Password"
+          value={form.confirmPassword}
+          onChange={handleChange}
+          className="w-full p-3 border rounded"
+        />
+
+        <input type="file" accept="image/*" onChange={handleFileChange}
+          className='border rounded-3xl font-black text-sm p-3 w-[250px] cursor-pointer hover:bg-gray-100 transition'
+        />
+
+        <button
+          type="submit"
+          disabled={!isValid || loading}
+          className={`w-full p-3 rounded text-white ${isValid ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-400 cursor-not-allowed'
+            }`}
+        >
+          {loading ? 'Registering...' : 'Register'}
+        </button>
+
+        <div className="text-center text-sm text-gray-500 mt-6">
+          Don’t have an account?
+          <Link
+            href="/login"
+            className="ml-2 inline-block text-blue-600 font-semibold hover:underline"
           >
-            <option value="">Employment Status</option>
-            <option value="Employed">Employed</option>
-            <option value="Unemployed">Unemployed</option>
-            <option value="Self-employed">Self-employed</option>
-            <option value="Student">Student</option>
-            <option value="Retired">Retired</option>
-          </select>
-
-          <select
-            name="marital_status"
-            value={form.marital_status}
-            onChange={handleChange}
-            className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 transition"
-          >
-            <option value="">Marital Status</option>
-            <option value="Single">Single</option>
-            <option value="Married">Married</option>
-            <option value="Divorced">Divorced</option>
-          </select>
-
-          <select
-            name="graduate_status"
-            value={form.graduate_status}
-            onChange={handleChange}
-            className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 transition"
-          >
-            <option value="">Graduate Status</option>
-            <option value="Graduate">Graduate</option>
-            <option value="Non-Graduate">Non-Graduate</option>
-          </select>
-
-          <input
-            type="text"
-            name="location"
-            placeholder="Location"
-            value={form.location}
-            onChange={handleChange}
-            className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 transition"
-          />
-
-          <input
-            type="text"
-            name="address"
-            placeholder="Address"
-            value={form.address}
-            onChange={handleChange}
-            className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 transition"
-          />
-
-          <input
-            type="tel"
-            name="phone_number"
-            placeholder="Phone Number"
-            value={form.phone_number}
-            onChange={handleChange}
-            className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 transition"
-          />
-
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={form.email}
-            onChange={handleChange}
-            className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 transition"
-          />
-
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={form.password}
-            onChange={handleChange}
-            className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 transition"
-          />
-
-          <input
-            type="password"
-            name="confirmPassword"
-            placeholder="Confirm Password"
-            value={form.confirmPassword}
-            onChange={handleChange}
-            className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 transition"
-          />
-
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleFileChange}
-            className="border rounded-full p-2 w-full text-sm cursor-pointer hover:bg-gray-100 transition"
-          />
-
-          <button
-            type="submit"
-            disabled={!isValid || loading}
-            className={`w-full p-3 rounded-xl text-white font-semibold ${
-              isValid ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-400 cursor-not-allowed'
-            } transition`}
-          >
-            {loading ? 'Registering...' : 'Register'}
-          </button>
-        </form>
-
-        <p className="text-center text-gray-500 mt-4">
-          Already have an account?{' '}
-          <Link href="/login" className="text-blue-600 hover:underline font-medium">
             Login
           </Link>
-        </p>
-      </div>
+        </div>
+      </form>
     </div>
   );
 }

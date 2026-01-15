@@ -47,9 +47,9 @@ export default async function DashboardPage() {
             <div className="mt-4 flex gap-4">
               <Link
                 href="/profile"
-                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium"
+                className="px-6 py-2  rounded-lg  font-medium"
               >
-                <Edit className="w-5 h-5 mr-2" />
+                <Edit className="w-5 h-5 mr-2 text-slate-600 hover:text-slate-200 transition" />
               </Link>
             </div>
           </div>
