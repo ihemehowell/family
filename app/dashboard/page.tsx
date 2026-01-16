@@ -7,6 +7,8 @@ import Link from 'next/link'
 import { Edit, LogOut } from 'lucide-react'
 
 
+
+
 export default async function DashboardPage() {
   const supabase = createClient()
 
@@ -38,7 +40,7 @@ export default async function DashboardPage() {
             />
           ) : (
             <div className="w-32 h-32 bg-gray-200 rounded-full flex items-center justify-center text-gray-400 text-lg font-medium border-2 border-gray-200">
-              No Photo
+             No photo
             </div>
           )}
 
@@ -46,19 +48,12 @@ export default async function DashboardPage() {
             <h1 className="text-3xl font-bold text-gray-900">{profile?.full_name || 'Unnamed User'}</h1>
             <p className="text-gray-500 mt-1">{profile?.email}</p>
 
-            <div className="mt-4 flex gap-4">
-              <Link
-                href="/profile"
-                className="px-6 py-2  rounded-lg  font-medium"
-              >
-                <Edit className="w-5 h-5 mr-2 text-slate-600 hover:text-slate-800 transition" />
-              </Link>
-            </div>
+            
           </div>
         </div>
 
         {/* Personal Info */}
-        <div className="bg-white shadow-md rounded-2xl p-6">
+        <div className="bg-white shadow-md rounded-2xl p-6 m-4">
           <h2 className="text-xl font-semibold text-gray-800 mb-6">Personal Information</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             <Info label="Age" value={profile?.age} />

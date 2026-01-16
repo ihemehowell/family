@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
+import ClickableAvatar from './ClickableAvatar'
+import { ChevronDown, ChevronUp } from 'lucide-react'
 
 type SortKey = 'full_name' | 'age' | 'family_branch'
 
@@ -104,10 +106,14 @@ export default function MemberTable() {
                 >
                <Td>
                   <div className="flex items-center gap-3">
-                    <img src={m.photo_url || '/placeholder.png'} className="w-9 h-9 rounded-full object-cover" />
+                    <ClickableAvatar
+                    src={m.photo_url || '/placeholder.png'} 
+                    alt={m.full_name} 
+                    className="w-10 h-10"
+                    />
                     <div>
-                      <p className="font-medium">{m.full_name}</p>
-                      <p className="text-xs text-gray-500">{m.email}</p>
+                      <p className="font-medium text-md">{m.full_name}</p>
+                      <p className="text-md text-gray-500">{m.email}</p>
                     </div>
                   </div>
                 </Td>
@@ -149,18 +155,44 @@ function Select({ value, set, label, values }: any) {
     </select>
   )
 }
+function Th({
+  children,
+  sort,
+  sortKey,
+  sortDir,
+  setSortKey,
+  setSortDir,
+}: any) {
+  const sortable = !!sort
+  const active = sortable && sort === sortKey
 
-function Th({ children, sort, sortKey, sortDir, setSortKey, setSortDir }: any) {
-  const active = sort === sortKey
+  const handleClick = () => {
+    if (!sortable) return
+
+    if (active) {
+      setSortDir((d: 'asc' | 'desc') => (d === 'asc' ? 'desc' : 'asc'))
+    } else {
+      setSortKey(sort)
+      setSortDir('asc')
+    }
+  }
+
   return (
     <th
-      onClick={() => {
-        if (active) setSortDir(sortDir === 'asc' ? 'desc' : 'asc')
-        else { setSortKey(sort); setSortDir('asc') }
-      }}
-      className="cursor-pointer text-left px-4 py-3 uppercase text-xs text-gray-500"
+      onClick={handleClick}
+      className={`px-4 py-3 text-left uppercase text-xs
+        ${sortable ? 'cursor-pointer text-gray-500' : 'text-gray-400 cursor-default'}
+      `}
     >
-      {children} {active && (sortDir === 'asc' ? '↑' : '↓')}
+      <span className="inline-flex items-center gap-1">
+        {children}
+
+        {active && (
+          sortDir === 'asc'
+            ? <ChevronUp className="w-3 h-3" />
+            : <ChevronDown className="w-3 h-3" />
+        )}
+      </span>
     </th>
   )
 }
@@ -177,6 +209,7 @@ function Badge({ type }: { type: string }) {
     Single: 'bg-gray-100 text-gray-700',
     Graduate: 'bg-purple-100 text-purple-700',
     'Not Graduate': 'bg-yellow-100 text-yellow-700',
+    Skilled:  'bg-cyan-100  text-cyan-700'
   }
   return (
     <span className={`px-2 py-1 rounded-full text-xs font-medium ${map[type] || 'bg-gray-100 text-gray-700'}`}>

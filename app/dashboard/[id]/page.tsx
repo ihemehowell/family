@@ -3,7 +3,9 @@ import { cookies } from 'next/headers'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Navbar from '@/app/components/Navbar'
-import { ChevronLeftCircle } from 'lucide-react'
+import { ChevronLeft} from 'lucide-react'
+import ClickableAvatar from '@/app/components/ClickableAvatar'
+
 
 function isUUID(id: string) {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)
@@ -39,23 +41,24 @@ export default async function MemberViewPage({ params }: { params: { id: string 
       <Navbar />
       <div className="max-w-4xl mx-auto bg-white rounded-xl mt-10 shadow p-8 space-y-6">
         {/* Back Button */}
-        <div className='flex  justify-between items-center gap-6'>
-             <h1 className="text-3xl font-bold mt-4">Member Profile</h1>
-        <Link
+        <div className='flex  flex-col  gap-3'>
+          <Link
           href="/admin"
-          className="inline-block px-4 py-2   text-gray-800 rounded-md font-medium"
+          className=''
         >
-        <ChevronLeftCircle  className='w-8 h-8'/>
+        <ChevronLeft  className='w-8 h-8 text-gray-600 hover:text-blue-500'/>
         </Link>
+             <h1 className="text-3xl font-bold mt-4">Member Profile</h1>
+        
 
        
         </div>
 
         <div className="flex items-center gap-6 mt-4">
-          <img
+          <ClickableAvatar
             src={member.photo_url || '/placeholder.png'}
             alt={member.full_name || 'Member'}
-            className="w-28 h-28 rounded-full object-cover border"
+            className='w-28 h-28'
           />
           <div>
             <h1 className="text-3xl font-bold">{member.full_name || 'Unknown'}</h1>

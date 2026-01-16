@@ -36,6 +36,7 @@ export default function AvatarUploader({ userId, onUploaded }: { userId: string,
       accept="image/*"
       disabled={uploading}
       onChange={(e) => e.target.files && handleUpload(e.target.files[0])}
+      className='border border-3 rounded-xl font-black p-3 w-75 hover:border-blue-500 cursor-pointer'
     />
   )
 }

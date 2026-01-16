@@ -190,7 +190,7 @@ export default function RegisterClient() {
           placeholder="Full Name"
           value={form.full_name}
           onChange={handleChange}
-          className="w-full p-3 border rounded"
+          className="w-full p-3 border rounded-3xl"
         />
 
         <input
@@ -199,7 +199,7 @@ export default function RegisterClient() {
           placeholder="Age"
           value={form.age}
           onChange={handleChange}
-          className="w-full p-3 border rounded"
+          className="w-full p-3 border rounded-3xl"
         />
 
         <input
@@ -208,42 +208,44 @@ export default function RegisterClient() {
           placeholder="Family Branch"
           value={form.family_branch}
           onChange={handleChange}
-          className="w-full p-3 border rounded"
+          className="w-full p-3 border rounded-3xl"
         />
 
         <select
           name="employment_status"
           value={form.employment_status}
           onChange={handleChange}
-          className="w-full p-3 border rounded"
+          className="w-full p-3 border rounded-xl"
         >
           <option value="">Employment Status</option>
+          <option value="Business">Business</option>
           <option value="Employed">Employed</option>
-          <option value="Unemployed">Unemployed</option>
           <option value="Student">Student</option>
+          <option value="Unemployed">Unemployed</option>
         </select>
 
         <select
           name="marital_status"
           value={form.marital_status}
           onChange={handleChange}
-          className="w-full p-3 border rounded"
+          className="w-full p-3 border rounded-xl"
         >
           <option value="">Marital Status</option>
-          <option value="Single">Single</option>
-          <option value="Married">Married</option>
           <option value="Divorced">Divorced</option>
+          <option value="Married">Married</option>
+          <option value="Single">Single</option>
         </select>
 
         <select
           name="graduate_status"
           value={form.graduate_status}
           onChange={handleChange}
-          className="w-full p-3 border rounded"
+          className="w-full p-3 border rounded-xl"
         >
           <option value="">Graduate Status</option>
           <option value="Graduate">Graduate</option>
-          <option value="Non-Graduate">Non-Graduate</option>
+          <option value="Skilled">Skilled</option>
+          <option value="Non-Graduate">Under-Graduate</option>
         </select>
 
         <input
@@ -252,7 +254,7 @@ export default function RegisterClient() {
           placeholder="Location"
           value={form.location}
           onChange={handleChange}
-          className="w-full p-3 border rounded"
+          className="w-full p-3 border rounded-3xl"
         />
 
         <input
@@ -261,7 +263,7 @@ export default function RegisterClient() {
           placeholder="Address"
           value={form.address}
           onChange={handleChange}
-          className="w-full p-3 border rounded"
+          className="w-full p-3 border rounded-3xl"
         />
 
         <input
@@ -270,7 +272,7 @@ export default function RegisterClient() {
           placeholder="Phone Number"
           value={form.phone_number}
           onChange={handleChange}
-          className="w-full p-3 border rounded"
+          className="w-full p-3 border rounded-3xl"
         />
 
         <input
@@ -279,7 +281,7 @@ export default function RegisterClient() {
           placeholder="Email"
           value={form.email}
           onChange={handleChange}
-          className="w-full p-3 border rounded"
+          className="w-full p-3 border rounded-3xl"
         />
 
         <input
@@ -288,7 +290,7 @@ export default function RegisterClient() {
           placeholder="Password"
           value={form.password}
           onChange={handleChange}
-          className="w-full p-3 border rounded"
+          className="w-full p-3 border rounded-3xl"
         />
 
         <input
@@ -297,7 +299,7 @@ export default function RegisterClient() {
           placeholder="Confirm Password"
           value={form.confirmPassword}
           onChange={handleChange}
-          className="w-full p-3 border rounded"
+          className="w-full p-3 border rounded-3xl"
         />
 
         <input type="file" accept="image/*" onChange={handleFileChange}

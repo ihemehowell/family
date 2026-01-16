@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
-import { LogOut, Users, Home, Settings, Menu, X, LayoutDashboard } from 'lucide-react'
+import { LogOut, Users, Home, Settings, Menu, X, LayoutDashboard, Edit } from 'lucide-react'
 
 export default function Navbar() {
   const router = useRouter()
@@ -81,11 +81,11 @@ export default function Navbar() {
           {profileMenuOpen && (
             <div className="absolute right-0 mt-2 w-44 bg-white shadow-lg rounded-lg border border-gray-200 py-2 flex flex-col">
               <Link
-                href="/blank"
+                href="/profile"
                 className="px-4 py-2 text-gray-700 hover:bg-gray-100 flex items-center gap-2 disabled:opacity-50"
                 onClick={() => setProfileMenuOpen(false)}
               >
-                <Settings size={16} /> Settings
+                <Edit size={16} /> Edit Profile
               </Link>
               <button
                 onClick={logout}

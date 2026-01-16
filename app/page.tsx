@@ -1,5 +1,6 @@
 export const dynamic = 'force-dynamic'
 import { createClient } from '@/lib/supabase/server'
+import { LogIn } from 'lucide-react'
 import Link from 'next/link'
 
 export default async function Page() {
@@ -17,25 +18,17 @@ export default async function Page() {
             Okorocha Family Dashboard
           </h1>
 
-          <p className="text-white/80 text-lg md:text-xl mb-8">
+          <p className="text-white/70 text-lg md:text-xl mb-8 capitalize">
             A private space to manage family members, tasks, and important updates — all in one secure place.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               href="/login"
-              className="w-full sm:w-auto px-8 py-3 rounded-xl bg-white text-slate-900 font-semibold hover:bg-white/90 transition shadow"
+              className="w-full flex gap-2 items-center sm:w-auto px-10 py-3 rounded-xl text-black/60 bg-white text-slate-900 font-semibold hover:bg-white/70 transition shadow"
             >
+              <LogIn  size={20}/>
               Login
-            </Link>
-
-            <span className="text-white/60 hidden sm:block">or</span>
-
-            <Link
-              href="/register"
-              className="w-full sm:w-auto px-8 py-3 rounded-xl border border-white/40 text-white font-semibold hover:bg-white/10 transition"
-            >
-              Create an Account
             </Link>
           </div>
         </div>
