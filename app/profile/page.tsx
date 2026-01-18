@@ -66,10 +66,12 @@ export default function ProfilePage() {
       return acc
     }, {})
 
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('family_members')
       .update(updates)
       .eq('id', profile.id)
+      .select()
+      .single()
 
     if (error) {
       setError(error.message)
