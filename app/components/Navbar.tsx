@@ -55,7 +55,7 @@ export default function Navbar() {
           <LayoutDashboard size={20} /> Profile
         </Link>
 
-        <Link href="/admin" className="hidden md:flex items-center gap-2 text-gray-800 hover:text-blue-600 transition">
+        <Link href="/table" className="hidden md:flex items-center gap-2 text-gray-800 hover:text-blue-600 transition">
           <Users size={20} /> Family Members
         </Link>
 

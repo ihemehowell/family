@@ -3,7 +3,7 @@ import Navbar from '@/app/components/Navbar'
 import MemberTable from '@/app/components/MemberTable'
 import ProtectedRoute from '../components/ProtecteRoute'
 
-export default function AdminPage() {
+export default function TablePage() {
   return (
     <ProtectedRoute>
       <Navbar />
