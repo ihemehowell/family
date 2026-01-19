@@ -8,6 +8,10 @@ import { ChevronDown, ChevronUp } from 'lucide-react'
 
 type SortKey = 'full_name' | 'age' | 'family_branch'
 
+/* ---------- NORMALIZER ---------- */
+const normalize = (v?: string) =>
+  v?.trim().toLowerCase() ?? ''
+
 export default function MemberTable() {
   const router = useRouter()
 
@@ -30,14 +34,22 @@ export default function MemberTable() {
   const filtered = useMemo(() => {
     return members
       .filter(m =>
-        `${m.full_name} ${m.email}`.toLowerCase().includes(search.toLowerCase())
+        `${m.full_name} ${m.email}`
+          .toLowerCase()
+          .includes(search.toLowerCase())
       )
-      .filter(m => (branch ? m.family_branch === branch : true))
-      .filter(m => (location ? m.location === location : true))
-      .filter(m => (marital ? m.marital_status === marital : true))
+      .filter(m =>
+        branch ? normalize(m.family_branch) === normalize(branch) : true
+      )
+      .filter(m =>
+        location ? normalize(m.location) === normalize(location) : true
+      )
+      .filter(m =>
+        marital ? normalize(m.marital_status) === normalize(marital) : true
+      )
       .sort((a, b) => {
-        const valA = a[sortKey] || ''
-        const valB = b[sortKey] || ''
+        const valA = String(a[sortKey] ?? '')
+        const valB = String(b[sortKey] ?? '')
         return sortDir === 'asc'
           ? valA.localeCompare(valB)
           : valB.localeCompare(valA)
@@ -48,8 +60,10 @@ export default function MemberTable() {
   const visible = filtered.slice((page - 1) * pageSize, page * pageSize)
 
   function exportCSV() {
+    if (!visible.length) return
+
     const csv = [
-      Object.keys(visible[0] || {}).join(','),
+      Object.keys(visible[0]).join(','),
       ...visible.map(row => Object.values(row).join(',')),
     ].join('\n')
 
@@ -61,7 +75,6 @@ export default function MemberTable() {
     a.click()
   }
 
- 
   return (
     <div className="bg-white rounded-2xl shadow">
 
@@ -74,11 +87,31 @@ export default function MemberTable() {
           onChange={e => setSearch(e.target.value)}
         />
 
-        <Select value={branch} set={setBranch} label="Branch" values={unique(members, 'family_branch')} />
-        <Select value={location} set={setLocation} label="Location" values={unique(members, 'location')} />
-        <Select value={marital} set={setMarital} label="Marital" values={unique(members, 'marital_status')} />
+        <Select
+          value={branch}
+          set={setBranch}
+          label="Branch"
+          values={uniqueNormalized(members, 'family_branch')}
+        />
 
-        <button onClick={exportCSV} className="ml-auto bg-gray-900 text-white px-4 py-2 rounded text-sm">
+        <Select
+          value={location}
+          set={setLocation}
+          label="Location"
+          values={uniqueNormalized(members, 'location')}
+        />
+
+        <Select
+          value={marital}
+          set={setMarital}
+          label="Marital"
+          values={uniqueNormalized(members, 'marital_status')}
+        />
+
+        <button
+          onClick={exportCSV}
+          className="ml-auto bg-gray-900 text-white px-4 py-2 rounded text-sm"
+        >
           Export CSV
         </button>
       </div>
@@ -97,26 +130,28 @@ export default function MemberTable() {
               <Th>Location</Th>
             </tr>
           </thead>
+
           <tbody>
-           {visible.map(m => (
-                <tr
-                  key={m.id}
-                  onClick={() => router.push(`/dashboard/${m.id}`)}
-                  className="border-b hover:bg-gray-100 cursor-pointer"
-                >
-               <Td>
+            {visible.map(m => (
+              <tr
+                key={m.id}
+                onClick={() => router.push(`/dashboard/${m.id}`)}
+                className="border-b hover:bg-gray-100 cursor-pointer"
+              >
+                <Td>
                   <div className="flex items-center gap-3">
                     <ClickableAvatar
-                    src={m.photo_url || '/placeholder.png'} 
-                    alt={m.full_name} 
-                    className="w-10 h-10"
+                      src={m.photo_url || '/placeholder.png'}
+                      alt={m.full_name}
+                      className="w-10 h-10"
                     />
                     <div>
-                      <p className="font-medium text-md">{m.full_name}</p>
-                      <p className="text-md text-gray-500">{m.email}</p>
+                      <p className="font-medium">{m.full_name}</p>
+                      <p className="text-gray-500">{m.email}</p>
                     </div>
                   </div>
                 </Td>
+
                 <Td>{m.family_branch}</Td>
                 <Td>{m.age}</Td>
                 <Td><Badge type={m.employment_status} /></Td>
@@ -143,55 +178,54 @@ export default function MemberTable() {
 
 /* ---------- Helpers ---------- */
 
-function unique(data: any[], key: string) {
-  return Array.from(new Set(data.map(d => d[key]).filter(Boolean)))
+function uniqueNormalized(data: any[], key: string) {
+  const map = new Map<string, string>()
+
+  data.forEach(d => {
+    const raw = d[key]
+    if (!raw) return
+    const norm = normalize(raw)
+    if (!map.has(norm)) map.set(norm, raw.trim())
+  })
+
+  return Array.from(map.values())
 }
 
 function Select({ value, set, label, values }: any) {
   return (
-    <select value={value} onChange={e => set(e.target.value)} className="border px-3 py-2 rounded text-sm">
+    <select
+      value={value}
+      onChange={e => set(e.target.value)}
+      className="border px-3 py-2 rounded text-sm"
+    >
       <option value="">{label}</option>
-      {values.map((v: string) => <option key={v}>{v}</option>)}
+      {values.map((v: string) => (
+        <option key={v} value={v}>
+          {v}
+        </option>
+      ))}
     </select>
   )
 }
-function Th({
-  children,
-  sort,
-  sortKey,
-  sortDir,
-  setSortKey,
-  setSortDir,
-}: any) {
-  const sortable = !!sort
-  const active = sortable && sort === sortKey
+
+function Th({ children, sort, sortKey, sortDir, setSortKey, setSortDir }: any) {
+  const active = sort === sortKey
 
   const handleClick = () => {
-    if (!sortable) return
-
-    if (active) {
-      setSortDir((d: 'asc' | 'desc') => (d === 'asc' ? 'desc' : 'asc'))
-    } else {
-      setSortKey(sort)
-      setSortDir('asc')
-    }
+    if (!sort) return
+    active
+      ? setSortDir((d: 'asc' | 'desc') => (d === 'asc' ? 'desc' : 'asc'))
+      : (setSortKey(sort), setSortDir('asc'))
   }
 
   return (
     <th
       onClick={handleClick}
-      className={`px-4 py-3 text-left uppercase text-xs
-        ${sortable ? 'cursor-pointer text-gray-500' : 'text-gray-400 cursor-default'}
-      `}
+      className="px-4 py-3 text-left uppercase text-xs cursor-pointer text-gray-500"
     >
       <span className="inline-flex items-center gap-1">
         {children}
-
-        {active && (
-          sortDir === 'asc'
-            ? <ChevronUp className="w-3 h-3" />
-            : <ChevronDown className="w-3 h-3" />
-        )}
+        {active && (sortDir === 'asc' ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />)}
       </span>
     </th>
   )
@@ -209,8 +243,9 @@ function Badge({ type }: { type: string }) {
     Single: 'bg-gray-100 text-gray-700',
     Graduate: 'bg-purple-100 text-purple-700',
     'Not Graduate': 'bg-yellow-100 text-yellow-700',
-    Skilled:  'bg-cyan-100  text-cyan-700'
+    Skilled: 'bg-cyan-100 text-cyan-700',
   }
+
   return (
     <span className={`px-2 py-1 rounded-full text-xs font-medium ${map[type] || 'bg-gray-100 text-gray-700'}`}>
       {type || '—'}
