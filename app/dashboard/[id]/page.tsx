@@ -43,7 +43,7 @@ export default async function MemberViewPage({ params }: { params: { id: string 
         {/* Back Button */}
         <div className='flex  flex-col  gap-3'>
           <Link
-          href="/admin"
+          href="/dashboard"
           className=''
         >
         <ChevronLeft  className='w-8 h-8 text-gray-600 hover:text-blue-500'/>
