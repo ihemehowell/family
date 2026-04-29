@@ -72,33 +72,7 @@
   color-scheme: dark;
 }
 
-/* Also support OS-level preference as fallback */
-@media (prefers-color-scheme: dark) {
-  :root:not(.light) {
-    --background: #0f172a;
-    --foreground: #e2e8f0;
-    --surface: rgba(15, 23, 42, 0.78);
-    --surface-strong: #111827;
-    --border-soft: rgba(226, 232, 240, 0.12);
-    --brand: #14b8a6;
-    --brand-strong: #0f766e;
-    --brand-soft: rgba(20, 184, 166, 0.18);
 
-    --muted: rgba(226, 232, 240, 0.5);
-    --shimmer-from: rgba(30, 41, 59, 0.6);
-    --shimmer-mid: rgba(51, 65, 85, 0.95);
-    --input-bg: rgba(15, 23, 42, 0.6);
-    --badge-bg: rgba(15, 23, 42, 0.5);
-    --btn-secondary-bg: rgba(30, 41, 59, 0.8);
-    --btn-secondary-bg-hover: rgba(30, 41, 59, 1);
-    --breadcrumb-bg: rgba(15, 23, 42, 0.6);
-    --breadcrumb-color: rgba(148, 163, 184, 1);
-
-    --body-grad-1: #0f172a;
-    --body-grad-2: #111827;
-    --body-grad-3: #0f172a;
-  }
-}
 
 body {
   min-height: 100vh;
