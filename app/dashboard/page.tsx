@@ -7,6 +7,7 @@ import { ChevronRight, Mail, Phone, UserCircle2, Check } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import Navbar from '../components/Navbar'
 import ProfileActions from '../components/ProfileActions'
+import ShareableLinkGenerator from '../components/ShareableLinkGenerator'
 
 type ProfileRecord = {
   full_name?: string | null
@@ -123,6 +124,14 @@ export default async function DashboardPage() {
               ))}
             </div>
           </section>
+        <section className="app-card app-fade-in rounded-4xl p-6 md:p-8 mt-6">
+          <div className="mb-6">
+          <p className="text-xs uppercase tracking-[0.25em] text-slate-500">Invite Family</p>
+          <h2 className="mt-1 text-2xl font-semibold text-slate-950">Generate shareable login links</h2>
+          </div>
+          <ShareableLinkGenerator />
+      </section>
+          
         </div>
 
         <aside className="app-card app-fade-in rounded-4xl p-6 md:p-8 lg:sticky lg:top-24 lg:h-fit mt-19">
@@ -146,6 +155,8 @@ export default async function DashboardPage() {
           </div>
         </aside>
       </div>
+
+      
     </main>
   )
 }
