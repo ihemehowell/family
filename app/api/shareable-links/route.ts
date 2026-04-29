@@ -1,12 +1,8 @@
 // app/api/shareable-links/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabaseClient';
+import { supabaseAdmin } from '@/lib/supabaseServer';
 import { generateShareableToken, createShareableLink } from '@/lib/shareableLink';
 
-/**
- * POST /api/shareable-links
- * Generate a new shareable login link
- */
 export async function POST(req: NextRequest) {
   try {
     const { email } = await req.json();
@@ -18,21 +14,14 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Generate unique token
     const token = generateShareableToken();
-
-    // Store in shareable_links table with expiry (7 days)
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
 
-    const { error: insertError } = await supabase
+    const { error: insertError } = await supabaseAdmin
       .from('shareable_links')
-      .insert({
-        token,
-        email,
-        expires_at: expiresAt,
-        used: false,
-      });
+      .insert({ token, email, expires_at: expiresAt, used: false });
 
+    // ✅ actually handle the error
     if (insertError) {
       console.error('Database error:', insertError);
       return NextResponse.json(
@@ -59,10 +48,6 @@ export async function POST(req: NextRequest) {
   }
 }
 
-/**
- * GET /api/shareable-links/:token
- * Validate a shareable link
- */
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
@@ -75,8 +60,7 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    // Fetch link from database
-    const { data: link, error } = await supabase
+    const { data: link, error } = await supabaseAdmin
       .from('shareable_links')
       .select('*')
       .eq('token', token)
@@ -89,7 +73,6 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    // Check if expired
     if (new Date(link.expires_at) < new Date()) {
       return NextResponse.json(
         { error: 'Link has expired' },
@@ -97,7 +80,6 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    // Check if already used
     if (link.used) {
       return NextResponse.json(
         { error: 'Link has already been used' },
