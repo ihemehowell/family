@@ -24,8 +24,8 @@ async function testBucket() {
     // Get public URL
     const { data: urlData } = supabase.storage.from(bucketName).getPublicUrl('test.txt');
     console.log('Public URL:', urlData.publicUrl);
-  } catch (err: any) {
-    console.error('Error:', err.message);
+  } catch (err: unknown) {
+    console.error('Error:', err instanceof Error ? err.message : err)
   }
 }
 

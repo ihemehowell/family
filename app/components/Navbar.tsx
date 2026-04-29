@@ -2,39 +2,42 @@
 
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
+import { LayoutDashboard, LogOut, Menu, Moon, Sun, Users, X, Edit3, ChevronRight } from 'lucide-react'
 import { supabase } from '@/lib/supabaseClient'
-import { LogOut, Users, Home, Settings, Menu, X, LayoutDashboard, Edit } from 'lucide-react'
+import { useTheme } from '@/app/context/ThemeContext'
 
 export default function Navbar() {
   const router = useRouter()
+  const pathname = usePathname()
+  const { theme, toggleTheme } = useTheme()
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
-  const [initials, setInitials] = useState<string>('U')
+  const [initials, setInitials] = useState('U')
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [profileMenuOpen, setProfileMenuOpen] = useState(false)
 
   useEffect(() => {
     const getProfile = async () => {
       const { data: { user } } = await supabase.auth.getUser()
-      if (user) {
-        const { data: profile } = await supabase
-          .from('family_members')
-          .select('full_name, photo_url')
-          .eq('id', user.id)
-          .single()
 
-        if (profile) {
-          if (profile.photo_url) setAvatarUrl(profile.photo_url)
-          if (profile.full_name) {
-            const names = profile.full_name.split(' ')
-            const init = names.length > 1
-              ? `${names[0][0]}${names[names.length - 1][0]}`.toUpperCase()
-              : names[0][0].toUpperCase()
-            setInitials(init)
-          }
-        }
+      if (!user) return
+
+      const { data: profile } = await supabase
+        .from('family_members')
+        .select('full_name, photo_url')
+        .eq('id', user.id)
+        .single()
+
+      if (profile?.photo_url) {
+        setAvatarUrl(profile.photo_url)
+      }
+
+      if (profile?.full_name) {
+        const parts = profile.full_name.trim().split(' ')
+        setInitials(parts.length > 1 ? `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase() : parts[0][0].toUpperCase())
       }
     }
+
     getProfile()
   }, [])
 
@@ -43,86 +46,117 @@ export default function Navbar() {
     router.push('/login')
   }
 
+  const closeMenus = () => {
+    setMobileMenuOpen(false)
+    setProfileMenuOpen(false)
+  }
+
+  const linkClass = (href: string) =>
+    `rounded-full px-4 py-2 text-sm font-medium transition ${pathname === href ? 'bg-teal-50 text-green-200 shadow-sm' : 'text-slate-700 hover:bg-white hover:text-teal-700'}`
+
   return (
-    <nav className="bg-white shadow-md px-6 py-3 flex justify-between items-center sticky top-0 z-50">
-      {/* Left: Logo / Links */}
-      <div className="flex items-center gap-6">
-        {/* <Link href="/" className="hidden md:flex items-center justify-center gap-2 text-gray-800 font-semibold hover:text-blue-600 transition">
-          <Home size={20} /> Home
-        </Link> */}
+    <header className="sticky top-0 z-50 px-4 pt-4 md:px-6">
+      <nav aria-label="Main navigation" className="app-surface relative mx-auto flex max-w-7xl items-center justify-between rounded-full px-4 py-3 md:px-5">
+        <div className="flex items-center gap-2">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-teal-700 text-white shadow-lg shadow-teal-700/20">
+            <LayoutDashboard size={18} />
+          </div>
+          <div>
+            <p className="text-xs uppercase tracking-[0.28em] text-slate-500">Family</p>
+            <p className="text-sm font-semibold text-slate-950">Okorocha Dashboard</p>
+          </div>
+        </div>
 
-        <Link href="/dashboard" className="hidden md:flex items-center gap-2 text-gray-800 font-semibold hover:text-blue-600 transition">
-          <LayoutDashboard size={20} /> Profile
-        </Link>
+        <div className="hidden items-center gap-2 md:flex">
+          <Link href="/dashboard" aria-current={pathname === '/dashboard' ? 'page' : undefined} className={linkClass('/dashboard')}>
+            Profile
+          </Link>
+          <Link href="/table" aria-current={pathname === '/table' ? 'page' : undefined} className={linkClass('/table')}>
+            Family Members
+          </Link>
+        </div>
 
-        <Link href="/table" className="hidden md:flex items-center gap-2 text-gray-800 hover:text-blue-600 transition">
-          <Users size={20} /> Family Members
-        </Link>
-
-
-      </div>
-
-      {/* Right: Profile & Hamburger */}
-      <div className="flex items-center gap-4">
-        {/* Profile avatar */}
-        <div className="relative">
+        <div className="flex items-center gap-3">
           <button
-            onClick={() => setProfileMenuOpen(!profileMenuOpen)}
-            className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 hover:ring-2 hover:ring-blue-500 transition overflow-hidden"
+            onClick={toggleTheme}
+            aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            className="hidden h-11 w-11 items-center justify-center rounded-full border border-white/80 bg-white text-slate-700 transition hover:bg-slate-50 md:flex"
           >
-            {avatarUrl ? (
-              <img src={avatarUrl} alt="Profile" className="w-full h-full object-cover" />
-            ) : (
-              <span className="font-semibold">{initials}</span>
+            {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+          </button>
+
+          <div className="relative">
+            <button
+              onClick={() => setProfileMenuOpen((value) => !value)}
+              aria-label="Open profile menu"
+              className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full border border-white/80 bg-slate-100 text-sm font-semibold text-slate-700 transition hover:ring-4 hover:ring-teal-100"
+            >
+              {avatarUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={avatarUrl} alt="Profile" className="h-full w-full object-cover" />
+              ) : (
+                initials
+              )}
+            </button>
+
+            {profileMenuOpen && (
+              <div className="app-fade-in absolute right-0 mt-3 w-48 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl">
+                <Link
+                  href="/profile"
+                  onClick={closeMenus}
+                  className="flex items-center gap-2 px-4 py-3 text-sm text-slate-700 transition hover:bg-slate-50"
+                >
+                  <Edit3 size={16} /> Edit profile
+                </Link>
+                <button
+                  onClick={logout}
+                  className="flex w-full items-center gap-2 px-4 py-3 text-left text-sm text-rose-600 transition hover:bg-rose-50"
+                >
+                  <LogOut size={16} /> Logout
+                </button>
+              </div>
             )}
-          </button>
+          </div>
 
-          {/* Profile dropdown */}
-          {profileMenuOpen && (
-            <div className="absolute right-0 mt-2 w-44 bg-white shadow-lg rounded-lg border border-gray-200 py-2 flex flex-col">
-              <Link
-                href="/profile"
-                className="px-4 py-2 text-gray-700 hover:bg-gray-100 flex items-center gap-2 disabled:opacity-50"
-                onClick={() => setProfileMenuOpen(false)}
-              >
-                <Edit size={16} /> Edit Profile
-              </Link>
-              <button
-                onClick={logout}
-                className="px-4 py-2 text-red-600 hover:bg-gray-100 flex items-center gap-2"
-              >
-                <LogOut size={16} /> Logout
-              </button>
-            </div>
-          )}
-        </div>
-
-        {/* Mobile hamburger */}
-        <button
-          className="md:hidden flex items-center justify-center p-2 rounded-md hover:bg-gray-100 transition"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        >
-          {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
-      </div>
-
-      {/* Mobile menu */}
-      {mobileMenuOpen && (
-        <div className="absolute top-full left-0 w-full bg-white shadow-md border-t border-gray-200 flex flex-col md:hidden">
-          <Link href="/dashboard" className="px-6 py-3 border-b border-gray-100 flex items-center gap-2 hover:bg-gray-50">
-            <Home size={18} /> Dashboard
-          </Link>
-          <Link href="/admin" className="px-6 py-3 border-b border-gray-100 flex items-center gap-2 hover:bg-gray-50">
-            <Users size={18} /> Family Members
-          </Link>
           <button
-            onClick={logout}
-            className="px-6 py-3 text-red-600 flex items-center gap-2 hover:bg-gray-50"
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-white/80 bg-white text-slate-700 transition hover:bg-slate-50 md:hidden"
+            onClick={() => setMobileMenuOpen((value) => !value)}
+            aria-label="Toggle mobile navigation"
           >
-            <LogOut size={18} /> Logout
+            {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
         </div>
-      )}
-    </nav>
+
+        {mobileMenuOpen && (
+          <div className="app-fade-in absolute left-0 top-full mt-3 w-full rounded-[1.75rem] border border-slate-200 bg-white p-3 shadow-2xl md:hidden">
+            <Link href="/dashboard" aria-current={pathname === '/dashboard' ? 'page' : undefined} onClick={closeMenus} className="flex items-center gap-2 rounded-2xl px-4 py-3 text-slate-700 transition hover:bg-slate-50">
+              <LayoutDashboard size={18} /> Profile
+            </Link>
+            <Link href="/table" aria-current={pathname === '/table' ? 'page' : undefined} onClick={closeMenus} className="flex items-center gap-2 rounded-2xl px-4 py-3 text-slate-700 transition hover:bg-slate-50">
+              <Users size={18} /> Family Members
+            </Link>
+            <Link href="/profile" onClick={closeMenus} className="flex items-center gap-2 rounded-2xl px-4 py-3 text-slate-700 transition hover:bg-slate-50">
+              <Edit3 size={18} /> Edit Profile <ChevronRight size={16} className="ml-auto text-slate-400" />
+            </Link>
+            <button
+              onClick={() => {
+                toggleTheme()
+                closeMenus()
+              }}
+              className="flex w-full items-center gap-2 rounded-2xl px-4 py-3 text-left text-slate-700 transition hover:bg-slate-50"
+            >
+              {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+              {theme === 'dark' ? 'Light mode' : 'Dark mode'}
+            </button>
+            <button
+              onClick={logout}
+              className="flex w-full items-center gap-2 rounded-2xl px-4 py-3 text-left text-rose-600 transition hover:bg-rose-50"
+            >
+              <LogOut size={18} /> Logout
+            </button>
+          </div>
+        )}
+      </nav>
+    </header>
   )
 }
