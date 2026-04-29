@@ -280,17 +280,17 @@ function Select({ value, set, label, values }: SelectProps) {
 type ThProps = {
   children: React.ReactNode
   sort?: SortKey
-  sortKey: SortKey
-  sortDir: SortDirection
-  setSortKey: (key: SortKey) => void
-  setSortDir: React.Dispatch<React.SetStateAction<SortDirection>>
+  sortKey?: SortKey
+  sortDir?: SortDirection
+  setSortKey?: (key: SortKey) => void
+  setSortDir?: React.Dispatch<React.SetStateAction<SortDirection>>
 }
 
 function Th({ children, sort, sortKey, sortDir, setSortKey, setSortDir }: ThProps) {
   const active = sort === sortKey
 
   const handleClick = () => {
-    if (!sort) return
+    if (!sort || !setSortKey || !setSortDir) return
 
     if (active) {
       setSortDir((direction) => (direction === 'asc' ? 'desc' : 'asc'))

@@ -66,10 +66,14 @@ export default function ProfilePage() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
 
-    setProfile((prev) => ({
-      ...prev,
-      [name]: name === 'age' ? Number(value) : value,
-    }))
+    setProfile((prev) => {
+      if (!prev) return prev
+
+      return {
+        ...prev,
+        [name]: name === 'age' ? (value === '' ? null : Number(value)) : value,
+      } as ProfileRecord
+    })
 
     setFieldErrors((prev) => {
       const next = { ...prev }

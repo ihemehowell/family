@@ -13,13 +13,12 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
-  const [rememberMe, setRememberMe] = useState(true)
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
 
-    const { error, data } = await supabase.auth.signInWithPassword({ email, password, options: { remember: rememberMe } })
+    const { error, data } = await supabase.auth.signInWithPassword({ email, password })
     setLoading(false)
 
     if (error) {
@@ -123,10 +122,6 @@ export default function LoginPage() {
                 </div>
 
                 <div className="flex flex-col gap-3 text-sm md:flex-row md:items-center md:justify-between">
-                  <label className="inline-flex items-center gap-2 text-slate-600">
-                    <input type="checkbox" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} className="h-4 w-4 rounded border-slate-300 text-teal-700 focus:ring-teal-500" />
-                    Remember me
-                  </label>
                   <span className="text-slate-500">Secure access for members only.</span>
                   <Link href="/forgot-password" className="font-medium text-teal-700 hover:text-teal-800">
                     Forgot password?

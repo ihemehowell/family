@@ -10,7 +10,7 @@ export async function updateProfile(formData: ProfileFormData) {
   // Validate form data
   const validation = profileSchema.safeParse(formData);
   if (!validation.success) {
-    return { error: validation.error.errors[0].message };
+    return { error: validation.error.issues[0]?.message || 'Invalid profile data' };
   }
 
   const { data: { user } } = await supabase.auth.getUser();

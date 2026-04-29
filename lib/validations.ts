@@ -1,18 +1,22 @@
 // lib/validations.ts
 import { z } from 'zod';
 
+const employmentStatuses = ['employed', 'self-employed', 'unemployed', 'student', 'retired', 'homemaker'] as const
+const maritalStatuses = ['single', 'married', 'divorced', 'widowed', 'separated'] as const
+const graduateStatuses = ['high-school', 'undergraduate', 'graduate', 'post-graduate', 'none'] as const
+
 export const registerSchema = z.object({
   full_name: z.string().min(1, 'Full name is required'),
   age: z.coerce.number().min(1, 'Enter a valid age').max(120, 'Age must be less than 120'),
   family_branch: z.string().min(1, 'Family branch is required'),
-  employment_status: z.enum(['employed', 'self-employed', 'unemployed', 'student', 'retired', 'homemaker'], {
-    errorMap: () => ({ message: 'Select employment status' }),
+  employment_status: z.enum(employmentStatuses, {
+    error: 'Select employment status',
   }),
-  marital_status: z.enum(['single', 'married', 'divorced', 'widowed', 'separated'], {
-    errorMap: () => ({ message: 'Select marital status' }),
+  marital_status: z.enum(maritalStatuses, {
+    error: 'Select marital status',
   }),
-  graduate_status: z.enum(['high-school', 'undergraduate', 'graduate', 'post-graduate', 'none'], {
-    errorMap: () => ({ message: 'Select graduate status' }),
+  graduate_status: z.enum(graduateStatuses, {
+    error: 'Select graduate status',
   }),
   location: z.string().min(1, 'Location is required'),
   address: z.string().min(1, 'Address is required'),
@@ -34,9 +38,9 @@ export const profileSchema = z.object({
   full_name: z.string().min(1, 'Full name is required'),
   age: z.coerce.number().min(1, 'Enter a valid age').max(120, 'Age must be less than 120'),
   family_branch: z.string().min(1, 'Family branch is required'),
-  employment_status: z.enum(['employed', 'self-employed', 'unemployed', 'student', 'retired', 'homemaker']),
-  marital_status: z.enum(['single', 'married', 'divorced', 'widowed', 'separated']),
-  graduate_status: z.enum(['high-school', 'undergraduate', 'graduate', 'post-graduate', 'none']),
+  employment_status: z.enum(employmentStatuses),
+  marital_status: z.enum(maritalStatuses),
+  graduate_status: z.enum(graduateStatuses),
   location: z.string().min(1, 'Location is required'),
   address: z.string().min(1, 'Address is required'),
   phone_number: z.string().regex(/^\+?\d{7,15}$/, 'Enter a valid phone number'),
