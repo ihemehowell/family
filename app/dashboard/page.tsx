@@ -49,10 +49,10 @@ export default async function DashboardPage() {
   ]
 
   return (
-    <main className="min-h-screen px-4 pb-8 pt-4 md:px-6">
+    <main className="min-h-screen px-4 pb-8 pt-4 md:px-6 mx-auto max-w-7xl">
       <Navbar />
 
-      <div className="app-page-shell  grid gap-6 px-0 lg:grid-cols-[1.15fr_0.85fr]">
+      <div className="app-page-shell  grid gap-6 px-0 lg:grid-cols-[2fr_0.8fr]">
         <div className="space-y-6">
           <div className="app-breadcrumb text-sm mt-4">
             <Link href="/dashboard" className="font-semibold text-teal-700">Profile</Link>
@@ -134,13 +134,14 @@ export default async function DashboardPage() {
           
         </div>
 
-        <aside className="app-card app-fade-in rounded-4xl p-6 md:p-8 lg:sticky lg:top-24 lg:h-fit mt-19">
+        <aside className="app-card app-fade-in rounded-4xl p-6 md:p-8 max-w-sm lg:sticky lg:top-24 lg:h-fit mt-19">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs uppercase tracking-[0.25em] text-slate-500">Snapshot</p>
               <h2 className="mt-1 text-2xl font-semibold text-slate-950">Personal information</h2>
+              <p className="text-sm font-light text-slate-500">A quick overview of your details</p>
             </div>
-            <ChevronRight className="text-slate-400" />
+            
           </div>
 
           <div className="mt-6 grid gap-4">
