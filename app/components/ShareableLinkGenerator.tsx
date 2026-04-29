@@ -95,7 +95,7 @@ export default function ShareableLinkGenerator({ onLinkGenerated }: ShareableLin
           <button
             type="submit"
             disabled={loading || !email}
-            className="w-full rounded-lg bg-teal-500 py-2 text-sm font-medium text-white transition-colors hover:bg-teal-600 disabled:opacity-50"
+            className="w-full rounded-lg app-button-primary py-2 text-sm font-medium text-white transition-colors hover:bg-teal-600 disabled:opacity-50"
           >
             {loading ? (
               <>

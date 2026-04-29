@@ -173,8 +173,8 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-[0.88fr_1.12fr]">
-          <section className="app-card app-fade-in rounded-[2rem] p-6 md:p-8">
+        <div className="grid gap-6 lg:grid-cols-[0.75fr_1.12fr]">
+          <section className=" app-fade-in rounded-[2rem] p-6 md:p-8">
             <div className="relative overflow-hidden rounded-[1.75rem] bg-slate-950 px-6 py-6 text-white">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(20,184,166,0.24),transparent_32%)]" />
               <div className="relative space-y-4">
@@ -197,13 +197,13 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            <div className="mt-6 grid gap-3 sm:grid-cols-2">
+            <div className="mt-6 grid gap-3 sm:grid-cols-2 app-card app-fade-in rounded-4xl p-4" style={{ background: 'var(--surface)' }}>
               <MiniStat label="Profile status" value={hasChanges ? 'Unsaved changes' : 'All synced'} />
               <MiniStat label="Editing" value={saving ? 'Saving now' : 'Ready'} />
             </div>
           </section>
 
-          <section className="app-card app-fade-in rounded-[2rem] p-6 md:p-8">
+          <section className="app-card app-fade-in rounded-4xl p-6 md:p-8">
             <div className="mb-6 flex items-center justify-between gap-4">
               <div>
                 <p className="text-xs uppercase tracking-[0.25em] text-slate-500">Details</p>

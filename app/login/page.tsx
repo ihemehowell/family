@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Eye, EyeOff, Home, Loader2, LogIn, ShieldCheck } from 'lucide-react'
+import { Eye, EyeOff, Home, Loader2, LockOpen, LogIn, ShieldCheck } from 'lucide-react'
 import { toast } from 'sonner'
 import { supabase } from '@/lib/supabaseClient'
 
@@ -55,7 +55,7 @@ export default function LoginPage() {
                 <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-medium text-white/85">
                   <ShieldCheck size={16} className="text-teal-300" /> Protected family space
                 </div>
-                <h1 className="text-4xl font-semibold tracking-tight md:text-5xl">
+                <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">
                   Sign in with a calmer, cleaner interface.
                 </h1>
                 <p className="text-base leading-7 text-white/70 md:text-lg">
@@ -67,21 +67,18 @@ export default function LoginPage() {
             <div className="grid gap-3 sm:grid-cols-2">
               <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
                 <p className="text-sm text-white/55">Security</p>
-                <p className="mt-2 text-xl font-semibold">Invite-only access</p>
+                <p className="mt-2 text-md font-semibold">Invite-only access</p>
               </div>
               <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
                 <p className="text-sm text-white/55">Actions</p>
-                <p className="mt-2 text-xl font-semibold">Password reset ready</p>
+                <p className="mt-2 text-md font-semibold">Password reset ready</p>
               </div>
             </div>
           </aside>
 
           <div className="flex items-center justify-center px-6 py-10 md:px-10">
-            <div className="app-card w-full max-w-xl rounded-[2rem] p-6 md:p-10">
+            <div className="app-card w-full max-w-xl rounded-4xl p-6 md:p-10">
               <div className="mb-8 space-y-2 text-center">
-                <div className="mx-auto mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-teal-50 text-teal-700">
-                  <LogIn size={24} />
-                </div>
                 <h2 className="text-3xl font-semibold tracking-tight text-slate-950">Welcome back</h2>
                 <p className="app-muted">Log in to continue managing the family dashboard.</p>
               </div>
@@ -133,7 +130,7 @@ export default function LoginPage() {
                   disabled={loading}
                   className="app-button-primary inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-3.5 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  {loading ? <Loader2 size={18} className="animate-spin" /> : <LogIn size={18} />}
+                  {loading ? <Loader2 size={18} className="animate-spin" /> : <LockOpen size={18} />}
                   {loading ? 'Logging in...' : 'Login'}
                 </button>
               </form>

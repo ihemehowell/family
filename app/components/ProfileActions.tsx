@@ -45,17 +45,17 @@ export default function ProfileActions({ email, memberId }: ProfileActionsProps)
   }
 
   return (
-    <div className="flex flex-row flex-wrap items-center gap-1">
-      <button type="button" onClick={shareProfile} className="app-button-secondary inline-flex items-center justify-center gap-2 rounded-full px-2 py-2 text-sm font-semibold transition hover:-translate-y-0.5">
+    <div className="flex flex-row flex-wrap items-center gap-2">
+      <button type="button" onClick={shareProfile} className="app-button-secondary inline-flex items-center justify-center gap-2 rounded-full px-2 py-2 text-sm font-semibold transition hover:-translate-y-0.5 duration-500">
         <Share2 size={16} />
       </button>
-      <button type="button" onClick={messageMember} className="app-button-secondary inline-flex items-center justify-center gap-2 rounded-full px-2 py-2 text-sm font-semibold transition hover:-translate-y-0.5">
+      <button type="button" onClick={messageMember} className="app-button-secondary inline-flex items-center justify-center gap-2 rounded-full px-2 py-2 text-sm font-semibold transition hover:-translate-y-0.5 duration-500">
         <MessageSquare size={16} />
       </button>
-      <button type="button" onClick={copyMemberId} className="app-button-secondary inline-flex items-center justify-center gap-2 rounded-full px-2 py-2 text-sm font-semibold transition hover:-translate-y-0.5">
+      <button type="button" onClick={copyMemberId} className="app-button-secondary inline-flex items-center justify-center gap-2 rounded-full px-2 py-2 text-sm font-semibold transition hover:-translate-y-0.5 duration-500">
         <Copy size={16} />
       </button>
-      <Link href="/profile" className="app-button-primary inline-flex items-center justify-center gap-2 rounded-full px-2 py-2 text-sm font-semibold transition hover:-translate-y-0.5">
+      <Link href="/profile" className="app-button-primary inline-flex items-center justify-center gap-2 rounded-full px-2 py-2 text-sm font-semibold transition hover:-translate-y-0.5 duration-500">
         <Edit3 size={16} /> Edit
       </Link>
     </div>

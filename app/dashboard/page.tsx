@@ -109,10 +109,15 @@ export default async function DashboardPage() {
           <section className="app-card app-fade-in rounded-4xl p-6 md:p-8">
             <div className="flex items-center justify-between gap-4">
               <div>
+                
                 <p className="text-xs uppercase tracking-[0.25em] text-slate-500">Summary</p>
                 <h2 className="mt-1 text-2xl font-semibold text-slate-950">Profile snapshot</h2>
               </div>
+              <div className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1">
+                <div className='animate-pulse w-2 h-2 app-button-primary rounded-full' />
               <p className="text-sm text-slate-500">Updated in real time</p>
+              </div>
+              
             </div>
 
             <div className="mt-6 grid gap-3 sm:grid-cols-3 md:grid-cols-4">
